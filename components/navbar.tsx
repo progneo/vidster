@@ -9,7 +9,6 @@ import {
     HStack,
     VStack,
     Icon,
-    useColorModeValue,
     Text,
     Drawer,
     DrawerContent,
@@ -27,7 +26,6 @@ import {
 } from '@chakra-ui/react'
 import {
     FiHome,
-    FiSearch,
     FiDollarSign,
     FiInfo,
     FiMenu,
@@ -37,7 +35,6 @@ import {IconType} from 'react-icons'
 import React from "react";
 import NextLink from "next/link";
 import {SearchIcon} from "@chakra-ui/icons";
-import {NextRouter} from "next/router";
 
 interface LinkItemProps {
     name: string
@@ -68,8 +65,7 @@ interface SidebarProps extends BoxProps {
 
 const LinkItems: Array<LinkItemProps> = [
     {name: 'Home', icon: FiHome, href: '/'},
-    {name: 'Search', icon: FiSearch, href: '/search'},
-    {name: 'Customer', icon: FiDollarSign, href: '/customer'},
+    {name: 'Customer', icon: FiDollarSign, href: '/search'},
     {name: 'About', icon: FiInfo, href: '/about'},
 ]
 
@@ -77,7 +73,7 @@ const SidebarContent = ({path, onClose, ...rest}: SidebarProps) => {
     return (
         <Box
             transition="3s ease"
-            bg={useColorModeValue('#1F1D2B', '#1F1D2B')}
+            bg={'#1F1D2B'}
             w={{base: 'full', md: 60}}
             pos="fixed"
             h="full"
@@ -145,7 +141,7 @@ const MobileNav = ({onOpen, ...rest}: MobileProps) => {
             px={{base: 4, md: 4}}
             height="20"
             alignItems="center"
-            bg={useColorModeValue('#1F1D2B', '#1F1D2B')}
+            bg={'#1F1D2B'}
             justifyContent={{base: 'space-between', md: 'flex-end'}}
             gap={3}
             {...rest}>
@@ -185,12 +181,12 @@ const MobileNav = ({onOpen, ...rest}: MobileProps) => {
                             </HStack>
                         </MenuButton>
                         <MenuList
-                            bg={useColorModeValue('#1F1D2B', '#1F1D2B')}
-                            borderColor={useColorModeValue('#1F1D2B', '#1F1D2B')}>
-                            <MenuItem bg={useColorModeValue('#1F1D2B', '#1F1D2B')}>Profile</MenuItem>
-                            <MenuItem bg={useColorModeValue('#1F1D2B', '#1F1D2B')}>Settings</MenuItem>
+                            bg={'#1F1D2B'}
+                            borderColor={'#1F1D2B'}>
+                            <MenuItem bg={'#1F1D2B'}>Profile</MenuItem>
+                            <MenuItem bg={'#1F1D2B'}>Settings</MenuItem>
                             <MenuDivider/>
-                            <MenuItem bg={useColorModeValue('#1F1D2B', '#1F1D2B')}>Logout</MenuItem>
+                            <MenuItem bg={'#1F1D2B'}>Logout</MenuItem>
                         </MenuList>
                     </Menu>
                 </Flex>
@@ -203,7 +199,7 @@ const SidebarWithHeader = ({path, children}: ContentProps) => {
     const {isOpen, onOpen, onClose} = useDisclosure()
 
     return (
-        <Box minH="100vh" bg={useColorModeValue('#1F1D2B', '#1F1D2B')}>
+        <Box minH="100vh" bg={'#1F1D2B'}>
             <SidebarContent path={path} onClose={() => onClose} display={{base: 'none', md: 'block'}}/>
             <Drawer
                 isOpen={isOpen}

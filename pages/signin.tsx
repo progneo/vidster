@@ -11,11 +11,10 @@ import {
     Button,
     Heading,
     Text,
-    useColorModeValue,
 } from '@chakra-ui/react'
 import NextLink from "next/link";
 
-export default function SimpleCard() {
+function SignInCard() {
     return (
         <Flex justify={'center'}>
             <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
@@ -24,7 +23,7 @@ export default function SimpleCard() {
                 </Stack>
                 <Box
                     rounded={'lg'}
-                    bg={useColorModeValue('#3a3651', '#3a3651')}
+                    bg={'#3a3651'}
                     boxShadow={'lg'}
                     p={8}>
                     <Stack spacing={4}>
@@ -61,3 +60,5 @@ export default function SimpleCard() {
         </Flex>
     )
 }
+
+export default SignInCard

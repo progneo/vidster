@@ -13,14 +13,13 @@ import {
     Button,
     Heading,
     Text,
-    useColorModeValue,
-    Link, Switch,
+    Switch,
 } from '@chakra-ui/react'
 import {useState} from 'react'
 import {ViewIcon, ViewOffIcon} from '@chakra-ui/icons'
 import NextLink from "next/link";
 
-export default function SignupCard() {
+function SignupCard() {
     const [showPassword, setShowPassword] = useState(false)
     const [isOrdering, setIsOrdering] = useState(false)
 
@@ -34,7 +33,7 @@ export default function SignupCard() {
                 </Stack>
                 <Box
                     rounded={'lg'}
-                    bg={useColorModeValue('#3a3651', '#3a3651')}
+                    bg={'#3a3651'}
                     boxShadow={'lg'}
                     p={8}>
                     <Stack spacing={4}>
@@ -99,3 +98,5 @@ export default function SignupCard() {
         </Flex>
     )
 }
+
+export default SignupCard
