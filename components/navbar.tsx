@@ -102,7 +102,7 @@ const SidebarContent = ({path, onClose, ...rest}: SidebarProps) => {
 const NavItem = ({icon, href, children, path, ...rest}: NavItemProps) => {
     const active = path === href
     const iconColor = active ? '#ff7350' : 'white'
-    console.log(iconColor)
+
     return (
         <NextLink href={href}>
             <Box
