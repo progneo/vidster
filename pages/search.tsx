@@ -3,6 +3,7 @@ import {
   BoxProps,
   Button,
   Checkbox,
+  CircularProgress,
   CloseButton,
   Collapse,
   Drawer,
@@ -21,12 +22,12 @@ import {
   useDisclosure,
   VStack
 } from '@chakra-ui/react'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { FiFilter, FiTrendingUp } from 'react-icons/fi'
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons'
-import creatorsMock from '@/mock/creatorsMock'
 import Creator from '@/data/Creator'
 import CreatorCard from '@/components/creatorCard'
+import { getCreators } from '@/lib/creators'
 
 interface FilterItem {
   title: string
@@ -243,21 +244,50 @@ function OverlayBlock({ children }: OverlayProps) {
   )
 }
 
+function CreatorsBlock() {
+  const [data, setData] = useState<Array<Creator>>(null)
+  const [isLoading, setLoading] = useState<Boolean>(true)
+
+  useEffect(() => {
+    getCreators().then(data => {
+      setData(data)
+      setLoading(false)
+    })
+  }, [])
+
+  if (isLoading) {
+    return (
+      <Flex justify={'center'}>
+        <CircularProgress
+          isIndeterminate
+          size="100px"
+          thickness="4px"
+          color="#cc5d40"
+        />
+      </Flex>
+    )
+  }
+
+  return (
+    <Grid
+      templateColumns={{ base: 'repeat(2, 1fr)', '2xl': 'repeat(3, 1fr)' }}
+      gap={4}
+    >
+      {data.map((creator: Creator, i) => {
+        return (
+          <GridItem key={i} colSpan={{ base: 2, xl: 1 }}>
+            <CreatorCard creator={creator} />
+          </GridItem>
+        )
+      })}
+    </Grid>
+  )
+}
+
 function SearchCard() {
   return (
     <OverlayBlock>
-      <Grid
-        templateColumns={{ base: 'repeat(2, 1fr)', '2xl': 'repeat(3, 1fr)' }}
-        gap={4}
-      >
-        {creatorsMock.map((creator: Creator, i) => {
-          return (
-            <GridItem key={i} colSpan={{ base: 2, xl: 1 }}>
-              <CreatorCard creator={creator} />
-            </GridItem>
-          )
-        })}
-      </Grid>
+      <CreatorsBlock />
     </OverlayBlock>
   )
 }

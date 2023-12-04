@@ -190,7 +190,9 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
               </HStack>
             </MenuButton>
             <MenuList bg={'#1F1D2B'} borderColor={'#1F1D2B'}>
-              <MenuItem bg={'#1F1D2B'}>Profile</MenuItem>
+              <NextLink href={'/profile/0'}>
+                <MenuItem bg={'#1F1D2B'}>Profile</MenuItem>
+              </NextLink>
               <MenuItem bg={'#1F1D2B'}>Settings</MenuItem>
               <MenuDivider />
               <MenuItem bg={'#1F1D2B'}>Logout</MenuItem>
