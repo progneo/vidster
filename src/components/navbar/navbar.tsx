@@ -1,5 +1,3 @@
-'use client'
-
 import {
   IconButton,
   Avatar,
@@ -29,12 +27,15 @@ import {
   FiDollarSign,
   FiInfo,
   FiMenu,
-  FiChevronDown
+  FiChevronDown,
+  FiLogIn
 } from 'react-icons/fi'
 import { IconType } from 'react-icons'
 import React from 'react'
 import NextLink from 'next/link'
 import { SearchIcon } from '@chakra-ui/icons'
+import { signOut, useSession } from 'next-auth/react'
+import UserAccountNav from '@/src/components/navbar/userAccountNav'
 
 interface LinkItemProps {
   name: string
@@ -134,6 +135,34 @@ const NavItem = ({ icon, href, children, path, ...rest }: NavItemProps) => {
   )
 }
 
+const LoginButton = () => {
+  return (
+    <NextLink href={'/signin'}>
+      <HStack>
+        <FiLogIn />
+        <Text fontSize="sm">Login</Text>
+      </HStack>
+    </NextLink>
+  )
+}
+
+const UserPanel = () => {
+  const { data: session, status } = useSession()
+
+  if (status === 'authenticated') {
+    return (
+      <UserAccountNav
+        avatar={
+          'https://images.unsplash.com/photo-1619946794135-5bc917a27793?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9'
+        }
+        name={session?.user.firstName}
+      />
+    )
+  } else {
+    return <LoginButton />
+  }
+}
+
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   return (
     <Flex
@@ -163,41 +192,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
 
       <Flex minWidth={'max-content'} alignItems={'center'}>
         <Flex alignItems={'center'}>
-          <Menu>
-            <MenuButton
-              py={2}
-              transition="all 0.3s"
-              _focus={{ boxShadow: 'none' }}
-            >
-              <HStack>
-                <Avatar
-                  size={'sm'}
-                  src={
-                    'https://images.unsplash.com/photo-1619946794135-5bc917a27793?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9'
-                  }
-                />
-                <VStack
-                  display={{ base: 'none', md: 'flex' }}
-                  alignItems="flex-start"
-                  spacing="1px"
-                  ml="2"
-                >
-                  <Text fontSize="sm">Egor Sobolevskiy</Text>
-                </VStack>
-                <Box display={{ base: 'none', md: 'flex' }}>
-                  <FiChevronDown />
-                </Box>
-              </HStack>
-            </MenuButton>
-            <MenuList bg={'#1F1D2B'} borderColor={'#1F1D2B'}>
-              <NextLink href={'/profile/0'}>
-                <MenuItem bg={'#1F1D2B'}>Profile</MenuItem>
-              </NextLink>
-              <MenuItem bg={'#1F1D2B'}>Settings</MenuItem>
-              <MenuDivider />
-              <MenuItem bg={'#1F1D2B'}>Logout</MenuItem>
-            </MenuList>
-          </Menu>
+          <UserPanel />
         </Flex>
       </Flex>
     </Flex>

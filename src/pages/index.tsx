@@ -8,14 +8,14 @@ import {
   Stack,
   Text
 } from '@chakra-ui/react'
-import CreatorCard from '@/components/creatorCard'
-import Creator from '@/data/Creator'
+import Creator from '@/src/data/Creator'
 import React, { useEffect, useState } from 'react'
-import { getTopCreators } from '@/lib/creators'
+import { getTopCreators } from '@/src/lib/creators'
 import NextLink from 'next/link'
+import CreatorCard from '@/src/components/creatorCard'
 
 function CreatorsBlock() {
-  const [data, setData] = useState<Array<Creator>>(null)
+  const [data, setData] = useState<Array<Creator>>([])
   const [isLoading, setLoading] = useState<Boolean>(true)
 
   useEffect(() => {

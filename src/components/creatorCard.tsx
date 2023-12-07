@@ -1,6 +1,4 @@
-'use client'
-
-import Creator from '@/data/Creator'
+import Creator from '@/src/data/Creator'
 import {
   Heading,
   Avatar,
@@ -12,7 +10,7 @@ import {
   Container,
   Badge
 } from '@chakra-ui/react'
-import Rating from '@/components/rating'
+import Rating from '@/src/components/rating'
 import NextLink from 'next/link'
 
 interface CreatorCardProps {

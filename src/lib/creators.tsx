@@ -16,7 +16,7 @@ const getTopCreators = async () => {
   return response.json()
 }
 
-const getCreatorById = async (id: number) => {
+const getCreatorById = async (id: string) => {
   const response = await fetch(`${baseUrl}/api/creator/${id}`)
   if (!response.ok) {
     throw new Error(`Error fetching creator with id: ${id}`)

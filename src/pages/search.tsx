@@ -25,9 +25,9 @@ import {
 import React, { useEffect, useState } from 'react'
 import { FiFilter, FiTrendingUp } from 'react-icons/fi'
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons'
-import Creator from '@/data/Creator'
-import CreatorCard from '@/components/creatorCard'
-import { getCreators } from '@/lib/creators'
+import Creator from '@/src/data/Creator'
+import CreatorCard from '@/src/components/creatorCard'
+import { getCreators } from '@/src/lib/creators'
 
 interface FilterItem {
   title: string
@@ -245,7 +245,7 @@ function OverlayBlock({ children }: OverlayProps) {
 }
 
 function CreatorsBlock() {
-  const [data, setData] = useState<Array<Creator>>(null)
+  const [data, setData] = useState<Array<Creator>>([])
   const [isLoading, setLoading] = useState<Boolean>(true)
 
   useEffect(() => {

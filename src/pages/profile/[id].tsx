@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
-import Creator from '@/data/Creator'
-import { getCreatorById } from '@/lib/creators'
+import Creator from '@/src/data/Creator'
+import { getCreatorById } from '@/src/lib/creators'
 import {
   Avatar,
   Badge,
@@ -19,8 +19,8 @@ import {
   VStack
 } from '@chakra-ui/react'
 import { FiMail, FiMapPin } from 'react-icons/fi'
-import Rating from '@/components/rating'
-import YoutubeEmbed from '@/components/youtubeEmbed'
+import Rating from '@/src/components/rating'
+import YoutubeEmbed from '@/src/components/youtubeEmbed'
 
 function Profile() {
   const router = useRouter()
@@ -61,7 +61,7 @@ function Profile() {
         h={{ base: '100px', sm: '200px', lg: '300px' }}
       />
       <Stack
-        direction={{ base: 'column', xl: 'row'}}
+        direction={{ base: 'column', xl: 'row' }}
         mt={{ base: 4, lg: 8 }}
         align={'start'}
         spacing={{ base: 4, lg: 8 }}
