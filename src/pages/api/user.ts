@@ -1,8 +1,8 @@
 import { db } from '@/src/lib/db'
-import { NextResponse } from 'next/server'
 import { hash } from 'bcrypt'
 import * as z from 'zod'
 import { NextApiRequest, NextApiResponse } from 'next'
+import { User } from 'next-auth'
 
 const userSchema = z.object({
   firstName: z.string().min(1, 'First name is required').max(100),
@@ -15,6 +15,7 @@ const userSchema = z.object({
 })
 
 type ResponseData = {
+  user: User | null
   message: string
 }
 export default async function handler(
@@ -48,9 +49,6 @@ export default async function handler(
         .json({ user: newUser, message: 'User created successfully' })
     }
   } catch (error) {
-    return NextResponse.json(
-      { message: 'Something went wrong' },
-      { status: 500 }
-    )
+    res.status(500).json({ user: null, message: 'Something went wrong' })
   }
 }

@@ -8,19 +8,19 @@ import {
   Stack,
   Text
 } from '@chakra-ui/react'
-import Creator from '@/src/data/Creator'
 import React, { useEffect, useState } from 'react'
-import { getTopCreators } from '@/src/lib/creators'
+import { getCreators } from '@/src/lib/creators'
 import NextLink from 'next/link'
 import CreatorCard from '@/src/components/creatorCard'
+import { Creator } from '@prisma/client'
 
 function CreatorsBlock() {
   const [data, setData] = useState<Array<Creator>>([])
   const [isLoading, setLoading] = useState<Boolean>(true)
 
   useEffect(() => {
-    getTopCreators().then(data => {
-      setData(data)
+    getCreators().then(data => {
+      setData(data.profileList)
       setLoading(false)
     })
   }, [])
@@ -55,7 +55,7 @@ function Page() {
   return (
     <Box>
       <Heading noOfLines={1} as="h4" mb={{ base: '2', md: '5' }}>
-        Discover
+        Добро пожаловать
       </Heading>
       <Grid
         mb={{ base: '5', md: '10' }}
@@ -66,7 +66,7 @@ function Page() {
           <NextLink href={'/'}>
             <Box
               w={'full'}
-              rounded={'lg'}
+              rounded={'xl'}
               overflow={'hidden'}
               backgroundPosition="center"
               backgroundRepeat="no-repeat"
@@ -92,10 +92,10 @@ function Page() {
                     transform="translate(0, -50%)"
                   >
                     <Heading fontSize={{ base: '3xl', md: '4xl', lg: '5xl' }}>
-                      {'Let me cook'}
+                      {'Я видеограф'}
                     </Heading>
                     <Text fontSize={{ base: 'md', lg: 'lg' }} color="#fff">
-                      {'For those, how can create'}
+                      {'Для тех, кто готов творить'}
                     </Text>
                   </Stack>
                 </Box>
@@ -107,7 +107,7 @@ function Page() {
           <NextLink href={'/search'}>
             <Box
               w={'full'}
-              rounded={'md'}
+              rounded={'xl'}
               overflow={'hidden'}
               backgroundPosition="center"
               backgroundRepeat="no-repeat"
@@ -133,10 +133,10 @@ function Page() {
                     transform="translate(0, -50%)"
                   >
                     <Heading fontSize={{ base: '3xl', md: '4xl', lg: '5xl' }}>
-                      {'Ordering'}
+                      {'Я заказчик'}
                     </Heading>
                     <Text fontSize={{ base: 'md', lg: 'lg' }} color="#fff">
-                      {'For the needy'}
+                      {'Для тех, кто нуждается в творцах'}
                     </Text>
                   </Stack>
                 </Box>
@@ -146,7 +146,7 @@ function Page() {
         </GridItem>
       </Grid>
       <Heading noOfLines={1} as="h4" mb={{ base: '2', md: '5' }}>
-        Most Watched
+        Наиболее просматриваемые
       </Heading>
       <CreatorsBlock />
     </Box>

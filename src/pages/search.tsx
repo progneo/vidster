@@ -28,6 +28,9 @@ import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons'
 import Creator from '@/src/data/Creator'
 import CreatorCard from '@/src/components/creatorCard'
 import { getCreators } from '@/src/lib/creators'
+import { Tag } from '@prisma/client'
+import { arrayOf } from 'prop-types'
+import { getTags } from '@/src/lib/tags'
 
 interface FilterItem {
   title: string
@@ -79,59 +82,38 @@ const CategoryBlock = ({ category }: CategoryProps) => {
 }
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
-  const FilterCategories: Array<FilterCategory> = [
-    {
-      title: 'Category',
-      items: [
-        {
-          title: 'Category 1',
-          isChecked: false
-        },
-        {
-          title: 'Category 2',
-          isChecked: false
-        },
-        {
-          title: 'Category 3',
-          isChecked: false
-        }
-      ]
-    },
-    {
-      title: 'Category',
-      items: [
-        {
-          title: 'Category 1',
-          isChecked: false
-        },
-        {
-          title: 'Category 2',
-          isChecked: false
-        },
-        {
-          title: 'Category 3',
-          isChecked: false
-        }
-      ]
-    },
-    {
-      title: 'Category',
-      items: [
-        {
-          title: 'Category 1',
-          isChecked: false
-        },
-        {
-          title: 'Category 2',
-          isChecked: false
-        },
-        {
-          title: 'Category 3',
-          isChecked: false
-        }
-      ]
-    }
-  ]
+  const [filterCategories, setFilters] = useState<Array<FilterCategory>>()
+  const [isLoading, setLoading] = useState<Boolean>(true)
+
+  useEffect(() => {
+    getTags().then(data => {
+      const tags = Array<FilterItem>()
+      const categories = Array<FilterCategory>()
+
+      for (let tag of data.tagList) {
+        tags.push({ title: tag.name, isChecked: false })
+      }
+
+      categories.push({ title: 'Тэги', items: tags })
+
+      setFilters(categories)
+      setLoading(false)
+    })
+  }, [])
+
+  if (isLoading) {
+    return (
+      <Flex justify={'center'}>
+        <CircularProgress
+          isIndeterminate
+          size="100px"
+          thickness="4px"
+          color="#cc5d40"
+        />
+      </Flex>
+    )
+  }
+
   return (
     <Box
       transition="3s ease"
@@ -144,11 +126,11 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
     >
       <Flex alignItems="center" justifyContent="space-between" mb={2}>
         <Text fontSize="xl" fontWeight="semibold">
-          Filters
+          Фильтры
         </Text>
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
-      {FilterCategories.map((category, i) => (
+      {filterCategories?.map((category, i) => (
         <CategoryBlock key={i} category={category} />
       ))}
       <Button
@@ -159,7 +141,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
           color: 'white'
         }}
       >
-        Apply
+        Применить
       </Button>
     </Box>
   )
@@ -184,7 +166,6 @@ const Panel = ({ onOpen, ...rest }: PanelProps) => {
       >
         Filters
       </Button>
-
       <Flex minWidth={'max-content'} alignItems={'center'}>
         <Flex alignItems={'center'}>
           <Menu>
@@ -195,13 +176,12 @@ const Panel = ({ onOpen, ...rest }: PanelProps) => {
             >
               <HStack color={'#ff7551'}>
                 <FiTrendingUp />
-                <Text fontSize="sm">Sort by</Text>
+                <Text fontSize="sm">Сортировка</Text>
               </HStack>
             </MenuButton>
             <MenuList bg={'#1F1D2B'} borderColor={'#1F1D2B'}>
-              <MenuItem bg={'#1F1D2B'}>By this</MenuItem>
-              <MenuItem bg={'#1F1D2B'}>By this</MenuItem>
-              <MenuItem bg={'#1F1D2B'}>By this</MenuItem>
+              <MenuItem bg={'#1F1D2B'}>По рейтингу</MenuItem>
+              <MenuItem bg={'#1F1D2B'}>По названию</MenuItem>
             </MenuList>
           </Menu>
         </Flex>
@@ -216,7 +196,7 @@ function OverlayBlock({ children }: OverlayProps) {
   return (
     <Box>
       <Heading noOfLines={1} as="h4" mb={{ base: '2', md: '5' }}>
-        Creator list
+        Список видеографов
       </Heading>
       <SidebarContent
         onClose={() => onClose}
@@ -250,7 +230,7 @@ function CreatorsBlock() {
 
   useEffect(() => {
     getCreators().then(data => {
-      setData(data)
+      setData(data.profileList)
       setLoading(false)
     })
   }, [])
@@ -267,6 +247,7 @@ function CreatorsBlock() {
       </Flex>
     )
   }
+  console.log(data)
 
   return (
     <Grid

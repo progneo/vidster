@@ -1,6 +1,5 @@
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
-import Creator from '@/src/data/Creator'
 import { getCreatorById } from '@/src/lib/creators'
 import {
   Avatar,
@@ -21,20 +20,24 @@ import {
 import { FiMail, FiMapPin } from 'react-icons/fi'
 import Rating from '@/src/components/rating'
 import YoutubeEmbed from '@/src/components/youtubeEmbed'
+import { Creator } from '@prisma/client'
 
 function Profile() {
   const router = useRouter()
-  const id = router.query.id
+  const { id } = router.query
 
   const [data, setData] = useState<Creator>(null)
   const [isLoading, setLoading] = useState<Boolean>(true)
 
   useEffect(() => {
-    getCreatorById(id).then(data => {
-      setData(data)
-      setLoading(false)
-    })
-  }, [])
+    if (id) {
+      getCreatorById(Number(id)).then(data => {
+        setData(data.profile)
+        setLoading(false)
+        console.log(data)
+      })
+    }
+  }, [id])
 
   if (isLoading) {
     return (
@@ -74,26 +77,26 @@ function Profile() {
             spacing={4}
             align="stretch"
           >
-            <Avatar size="xl" name={data.name} src={data.avatar} />
-            <Heading>{data.name}</Heading>
-            <Rating rating={data.rating} />
+            <Avatar size="xl" name={data.username} src={data.avatar} />
+            <Heading>{data.username}</Heading>
+            <Rating rating={'4.5'} />
             <Text>{data.description}</Text>
             <HStack>
               <FiMapPin />
               <Text>{data.address}</Text>
             </HStack>
-            <Flex gap={2}>
-              {data.tags.map((tag, i) => {
+            <Flex gap={2} wrap={'wrap'}>
+              {data.tags.map(res => {
                 return (
                   <Badge
-                    key={i}
+                    key={res.tag.id}
                     px={2}
                     py={1}
                     variant="solid"
                     colorScheme={'green'}
                     fontWeight={'400'}
                   >
-                    {tag}
+                    {res.tag.name}
                   </Badge>
                 )
               })}
@@ -118,18 +121,13 @@ function Profile() {
             }}
             gap={4}
           >
-            <GridItem colSpan={{ base: 2, xl: 1 }}>
-              <YoutubeEmbed embedId={'JGgnJ0XKGN4'} />
-            </GridItem>
-            <GridItem colSpan={{ base: 2, xl: 1 }}>
-              <YoutubeEmbed embedId={'JGgnJ0XKGN4'} />
-            </GridItem>
-            <GridItem colSpan={{ base: 2, xl: 1 }}>
-              <YoutubeEmbed embedId={'JGgnJ0XKGN4'} />
-            </GridItem>
-            <GridItem colSpan={{ base: 2, xl: 1 }}>
-              <YoutubeEmbed embedId={'JGgnJ0XKGN4'} />
-            </GridItem>
+            {data.works.map(res => {
+              return (
+                <GridItem key={res.id} colSpan={{ base: 2, xl: 1 }}>
+                  <YoutubeEmbed embedId={res.url} />
+                </GridItem>
+              )
+            })}
           </Grid>
         </Stack>
       </Stack>

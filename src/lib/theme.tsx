@@ -36,7 +36,7 @@ const components = {
 }
 
 const fonts = {
-  body: "'Poppins'"
+  body: "'Montserrat'"
 }
 
 const colors = {

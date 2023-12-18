@@ -4,6 +4,7 @@ declare module 'next-auth' {
   interface User {
     firstName: string
     lastName: string
+    avatar: string
   }
 
   interface Session {

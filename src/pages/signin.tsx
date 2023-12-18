@@ -8,7 +8,8 @@ import {
   Stack,
   Button,
   Heading,
-  Text
+  Text,
+  VStack
 } from '@chakra-ui/react'
 import NextLink from 'next/link'
 import { z } from 'zod'
@@ -100,17 +101,32 @@ function SignInCard() {
                     <Text color={'#ff7551'}>Forgot password?</Text>
                   </NextLink>
                 </Stack>
-                <Button
-                  bg={'#ff7551'}
-                  color={'white'}
-                  _hover={{
-                    bg: '#b25138'
-                  }}
-                  type="submit"
-                  isLoading={isSubmitting}
-                >
-                  Sign in
-                </Button>
+                <VStack>
+                  <Button
+                    bg={'#ff7551'}
+                    w={'300px'}
+                    color={'white'}
+                    _hover={{
+                      bg: '#b25138'
+                    }}
+                    type="submit"
+                    isLoading={isSubmitting}
+                  >
+                    Sign in
+                  </Button>
+                  <NextLink href={'/signup'}>
+                    <Button
+                      bg={'#554f77'}
+                      w={'300px'}
+                      color={'white'}
+                      _hover={{
+                        bg: '#1e1c2a'
+                      }}
+                    >
+                      Create account
+                    </Button>
+                  </NextLink>
+                </VStack>
               </Stack>
             </Stack>
           </form>

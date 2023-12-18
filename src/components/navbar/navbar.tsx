@@ -1,11 +1,9 @@
 import {
   IconButton,
-  Avatar,
   Box,
   CloseButton,
   Flex,
   HStack,
-  VStack,
   Icon,
   Text,
   Drawer,
@@ -13,28 +11,16 @@ import {
   useDisclosure,
   BoxProps,
   FlexProps,
-  Menu,
-  MenuButton,
-  MenuDivider,
-  MenuItem,
-  MenuList,
   Input,
   InputGroup,
   InputRightElement
 } from '@chakra-ui/react'
-import {
-  FiHome,
-  FiDollarSign,
-  FiInfo,
-  FiMenu,
-  FiChevronDown,
-  FiLogIn
-} from 'react-icons/fi'
+import { FiHome, FiDollarSign, FiInfo, FiMenu, FiLogIn } from 'react-icons/fi'
 import { IconType } from 'react-icons'
 import React from 'react'
 import NextLink from 'next/link'
 import { SearchIcon } from '@chakra-ui/icons'
-import { signOut, useSession } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 import UserAccountNav from '@/src/components/navbar/userAccountNav'
 
 interface LinkItemProps {
@@ -65,9 +51,9 @@ interface SidebarProps extends BoxProps {
 }
 
 const LinkItems: Array<LinkItemProps> = [
-  { name: 'Home', icon: FiHome, href: '/' },
-  { name: 'Customer', icon: FiDollarSign, href: '/search' },
-  { name: 'About', icon: FiInfo, href: '/about' }
+  { name: 'Домой', icon: FiHome, href: '/' },
+  { name: 'Заказчику', icon: FiDollarSign, href: '/search' },
+  { name: 'О нас', icon: FiInfo, href: '/about' }
 ]
 
 const SidebarContent = ({ path, onClose, ...rest }: SidebarProps) => {
@@ -111,6 +97,7 @@ const NavItem = ({ icon, href, children, path, ...rest }: NavItemProps) => {
           borderRadius="lg"
           role="group"
           cursor="pointer"
+          fontWeight={'bold'}
           _hover={{
             bg: '#353340',
             color: 'white'
@@ -120,7 +107,7 @@ const NavItem = ({ icon, href, children, path, ...rest }: NavItemProps) => {
           {icon && (
             <Icon
               mr="4"
-              fontSize="16"
+              fontSize="20"
               color={iconColor}
               _groupHover={{
                 color: iconColor
@@ -152,9 +139,7 @@ const UserPanel = () => {
   if (status === 'authenticated') {
     return (
       <UserAccountNav
-        avatar={
-          'https://images.unsplash.com/photo-1619946794135-5bc917a27793?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9'
-        }
+        avatar={'https://bit.ly/broken-link'}
         name={session?.user.firstName}
       />
     )
@@ -183,7 +168,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         icon={<FiMenu />}
       />
       <InputGroup>
-        <Input variant="filled" placeholder="Search" />
+        <Input variant="filled" placeholder="Поиск" />
         <InputRightElement>
           {' '}
           <SearchIcon color="#5a5a68" />{' '}

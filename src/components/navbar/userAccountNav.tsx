@@ -16,7 +16,7 @@ import { FiChevronDown } from 'react-icons/fi'
 import NextLink from 'next/link'
 import { signOut } from 'next-auth/react'
 import React from 'react'
-import {redirect} from "next/navigation";
+import { redirect } from 'next/navigation'
 
 interface UserAccountNavInterface {
   avatar: string
@@ -44,15 +44,12 @@ const UserAccountNav = ({ avatar, name }: UserAccountNavInterface) => {
       </MenuButton>
       <MenuList bg={'#1F1D2B'} borderColor={'#1F1D2B'}>
         <NextLink href={'/profile/0'}>
-          <MenuItem bg={'#1F1D2B'}>Profile</MenuItem>
+          <MenuItem bg={'#1F1D2B'}>Профиль</MenuItem>
         </NextLink>
-        <MenuItem bg={'#1F1D2B'}>Settings</MenuItem>
+        <MenuItem bg={'#1F1D2B'}>Настройки</MenuItem>
         <MenuDivider />
-        <MenuItem bg={'#1F1D2B'} onClick={() => signOut(
-            redirect:true,
-
-        )}>
-          Logout
+        <MenuItem bg={'#1F1D2B'} onClick={() => signOut()}>
+          Выход
         </MenuItem>
       </MenuList>
     </Menu>

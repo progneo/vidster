@@ -1,4 +1,3 @@
-import Creator from '@/src/data/Creator'
 import {
   Heading,
   Avatar,
@@ -12,6 +11,7 @@ import {
 } from '@chakra-ui/react'
 import Rating from '@/src/components/rating'
 import NextLink from 'next/link'
+import { Creator } from '@prisma/client'
 
 interface CreatorCardProps {
   creator: Creator
@@ -40,23 +40,24 @@ function CreatorCard({ creator }: CreatorCardProps) {
           </Flex>
           <Box pb={6} mt={-6}>
             <Stack spacing={1} mb={3}>
-              <Text color={'gray.500'}>{creator.name}</Text>
+              <Text color={'gray.500'}>{creator.username}</Text>
               <Heading fontSize={'1xl'} fontWeight={500} fontFamily={'body'}>
                 {creator.description}
               </Heading>
             </Stack>
             <Rating rating={4.3} />
-            <Stack align={'center'} direction={'row'} mt={5}>
-              {creator.tags.map((tag, i) => {
+            <Stack align={'center'} direction={'row'} wrap={'wrap'} mt={5}>
+              {creator.tags.map(res => {
                 return (
                   <Badge
-                    key={i}
+                    key={res.tag.id}
                     px={2}
                     py={1}
-                    bg={'#cc5d40'}
+                    variant="solid"
+                    colorScheme={'green'}
                     fontWeight={'400'}
                   >
-                    {tag}
+                    {res.tag.name}
                   </Badge>
                 )
               })}
