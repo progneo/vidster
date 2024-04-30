@@ -122,6 +122,7 @@ function CreatorPage() {
               '2xl': 'repeat(3, 1fr)'
             }}
             gap={4}
+            mb={3}
           >
             {data.works.map(res => {
               return (
