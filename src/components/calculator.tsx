@@ -55,6 +55,10 @@ function Calculator({ services }: { services: ServiceOfCreator[] }) {
     })
   }
 
+  if (services.length === 0) {
+    return
+  }
+
   return (
     <Box w={'full'} bg={'#252835'} rounded={'xl'} p={4}>
       <Heading noOfLines={1} as="h4" mb={{ base: '2', md: '5' }}>
@@ -127,11 +131,13 @@ function Calculator({ services }: { services: ServiceOfCreator[] }) {
             </Checkbox>
           ))}
       </VStack>
-      <Input
-        isReadOnly={true}
-        value={`Примерная стоимость проекта: ${sumOfSelectedServicePrices()} рублей`}
-      />
-      <Divider py={3} />
+      <Box py={2}>
+        <Input
+          isReadOnly={true}
+          value={`Примерная стоимость проекта: ${sumOfSelectedServicePrices()} рублей`}
+        />
+      </Box>
+      <Divider py={1} />
       <Text fontSize={'xs'} pt={2}>
         *Стоимость примерная и может отличаться от итоговой
       </Text>

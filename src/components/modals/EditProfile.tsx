@@ -21,18 +21,16 @@ import {
   MenuList,
   SimpleGrid,
   Stack,
+  Text,
   Textarea
 } from '@chakra-ui/react'
 import { z } from 'zod'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import getYoutubeVideoId from '@/src/util/getYoutubeVideoId'
-import { addWork } from '@/src/lib/works'
 import React, { useEffect, useState } from 'react'
 import Creator from '@/src/types/Creator'
-import { useRouter } from 'next/router'
 import Tag from '@/src/types/Tag'
-import { createCreator, editCreator } from '@/src/lib/creators'
+import { editCreator } from '@/src/lib/creators'
 import { getTags } from '@/src/lib/tags'
 import { BiPlus } from 'react-icons/bi'
 
@@ -141,12 +139,13 @@ function EditProfileModal({
               ml={3}
               isLoading={true}
             >
-              Добавить
+              Сохранить
             </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
     )
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -202,7 +201,7 @@ function EditProfileModal({
                 />
               </FormControl>
               <Stack>
-                <FormLabel>Тэги</FormLabel>
+                <Text>Тэги</Text>
                 <SimpleGrid spacing={2}>
                   {selectedTags.map((tag: Tag) => {
                     return (

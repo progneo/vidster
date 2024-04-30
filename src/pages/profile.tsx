@@ -32,6 +32,11 @@ import { useRouter } from 'next/router'
 import { EditIcon } from '@chakra-ui/icons'
 import { removeWork } from '@/src/lib/works'
 import EditProfileModal from '@/src/components/modals/EditProfile'
+import Calculator from '@/src/components/calculator'
+import { GrServices } from 'react-icons/gr'
+import EditServicesModal from '@/src/components/modals/EditServices'
+import Service from '@/src/types/Service'
+import { getServices } from '@/src/lib/services'
 
 const ProfilePage = () => {
   const router = useRouter()
@@ -39,6 +44,7 @@ const ProfilePage = () => {
   const authState = useAppSelector(state => state.auth)
   const [data, setData] = useState<Creator>()
   const [isLoading, setLoading] = useState<Boolean>(true)
+  const [services, setServices] = useState<Array<Service>>()
 
   const {
     isOpen: isOpenAddWorkModal,
@@ -50,6 +56,12 @@ const ProfilePage = () => {
     isOpen: isOpenEditProfileModal,
     onOpen: onOpenEditProfileModal,
     onClose: onCloseEditProfileModal
+  } = useDisclosure()
+
+  const {
+    isOpen: isOpenEditServicesModal,
+    onOpen: onOpenEditServicesModal,
+    onClose: onCloseEditServicesModal
   } = useDisclosure()
 
   const getProfileData = () => {
@@ -68,9 +80,18 @@ const ProfilePage = () => {
     })
   }
 
+  const loadServices = () => {
+    setLoading(true)
+    getServices().then(fetchedServices => {
+      setServices(fetchedServices)
+      setLoading(false)
+    })
+  }
+
   useEffect(() => {
     if (authState.id != 0) {
       getProfileData()
+      loadServices()
     }
   }, [authState])
 
@@ -98,6 +119,15 @@ const ProfilePage = () => {
           isOpen={isOpenEditProfileModal}
           creatorData={data}
         />
+        {services !== undefined && (
+          <EditServicesModal
+            onSubmit={getProfileData}
+            onClose={onCloseEditServicesModal}
+            isOpen={isOpenEditServicesModal}
+            services={services}
+          />
+        )}
+
         <Image
           rounded={'2xl'}
           alt={'Profile thumbnail'}
@@ -156,6 +186,17 @@ const ProfilePage = () => {
               >
                 Редактировать
               </Button>
+              <Button
+                bg={'#6c5ecf'}
+                color={'white'}
+                _hover={{
+                  bg: '#443b82'
+                }}
+                rightIcon={<GrServices />}
+                onClick={onOpenEditServicesModal}
+              >
+                Указать стоимость услуг
+              </Button>
             </VStack>
           </Box>
           <Stack
@@ -182,6 +223,7 @@ const ProfilePage = () => {
                 '2xl': 'repeat(3, 1fr)'
               }}
               gap={4}
+              mb={3}
             >
               {data?.works.map(res => {
                 return (
@@ -206,6 +248,7 @@ const ProfilePage = () => {
                 )
               })}
             </Grid>
+            <Calculator services={data.serviceOfCreator} />
           </Stack>
         </Stack>
       </Box>
