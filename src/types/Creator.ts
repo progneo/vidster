@@ -1,6 +1,7 @@
 import Work from '@/src/types/Work'
 import Review from '@/src/types/Review'
 import TagInCreator from '@/src/types/TagInCreator'
+import ServiceOfCreator from '@/src/types/ServiceOfCreator'
 
 export default interface Creator {
   id: number
@@ -13,4 +14,5 @@ export default interface Creator {
   works: Work[]
   reviews: Review[]
   tagsInCreator: TagInCreator[]
+  serviceOfCreator: ServiceOfCreator[]
 }

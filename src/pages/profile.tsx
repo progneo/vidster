@@ -2,7 +2,7 @@ import { useAppSelector } from '@/src/store/store'
 import React, { useEffect, useState } from 'react'
 import Creator from '@/src/types/Creator'
 import { getCreatorByUserId } from '@/src/lib/creators'
-import CrateCreatorProfilePage from '@/src/components/CreateCreatorPanel'
+import CrateCreatorProfilePage from '@/src/components/createCreatorPanel'
 import {
   Avatar,
   Badge,

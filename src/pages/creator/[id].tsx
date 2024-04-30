@@ -22,6 +22,7 @@ import Rating from '@/src/components/rating'
 import YoutubeEmbed from '@/src/components/youtubeEmbed'
 import Creator from '@/src/types/Creator'
 import calculateAverageRating from '@/src/util/calculateAverageRating'
+import Calculator from '@/src/components/calculator'
 
 function CreatorPage() {
   const router = useRouter()
@@ -36,7 +37,6 @@ function CreatorPage() {
       getCreatorById(Number(id)).then(data => {
         setData(data)
         setLoading(false)
-        console.log(data)
       })
     }
   }, [id])
@@ -131,6 +131,7 @@ function CreatorPage() {
               )
             })}
           </Grid>
+          <Calculator services={data.serviceOfCreator} />
         </Stack>
       </Stack>
     </Box>
