@@ -14,16 +14,15 @@ import {
 } from '@chakra-ui/react'
 import { FiChevronDown } from 'react-icons/fi'
 import NextLink from 'next/link'
-import { signOut } from 'next-auth/react'
 import React from 'react'
-import { redirect } from 'next/navigation'
 
 interface UserAccountNavInterface {
   avatar: string
   name: string
+  role: string
 }
 
-const UserAccountNav = ({ avatar, name }: UserAccountNavInterface) => {
+const UserAccountNav = ({ avatar, name, role }: UserAccountNavInterface) => {
   return (
     <Menu>
       <MenuButton py={2} transition="all 0.3s" _focus={{ boxShadow: 'none' }}>
@@ -42,16 +41,24 @@ const UserAccountNav = ({ avatar, name }: UserAccountNavInterface) => {
           </Box>
         </HStack>
       </MenuButton>
-      <MenuList bg={'#1F1D2B'} borderColor={'#1F1D2B'}>
-        <NextLink href={'/profile/0'}>
-          <MenuItem bg={'#1F1D2B'}>Профиль</MenuItem>
-        </NextLink>
-        <MenuItem bg={'#1F1D2B'}>Настройки</MenuItem>
-        <MenuDivider />
-        <MenuItem bg={'#1F1D2B'} onClick={() => signOut()}>
-          Выход
-        </MenuItem>
-      </MenuList>
+      {role === 'creator' && (
+        <MenuList bg={'#1F1D2B'} borderColor={'#1F1D2B'}>
+          <NextLink href={'/profile'}>
+            <MenuItem bg={'#1F1D2B'}>Профиль</MenuItem>
+          </NextLink>
+          <MenuDivider />
+          <NextLink href={'/logout'}>
+            <MenuItem bg={'#1F1D2B'}>Выход</MenuItem>
+          </NextLink>
+        </MenuList>
+      )}
+      {role !== 'creator' && (
+        <MenuList bg={'#1F1D2B'} borderColor={'#1F1D2B'}>
+          <NextLink href={'/logout'}>
+            <MenuItem bg={'#1F1D2B'}>Выход</MenuItem>
+          </NextLink>
+        </MenuList>
+      )}
     </Menu>
   )
 }

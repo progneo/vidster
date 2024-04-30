@@ -1,24 +1,28 @@
 import Fonts from '@/src/components/fonts'
-import React from 'react'
-import { SessionProvider } from 'next-auth/react'
+import React, { useEffect } from 'react'
 import { ChakraProvider } from '@chakra-ui/react'
 import theme from '@/src/lib/theme'
 import Layout from '@/src/pages/layout'
+import ReduxProvider from '@/src/store/redux-provider'
+import { useAppDispatch } from '@/src/store/store'
+import { logout } from '@/src/lib/auth'
+import { eraseAuthState } from '@/src/store/authSlice'
 
 if (typeof window !== 'undefined') {
   window.history.scrollRestoration = 'manual'
 }
 
-function Website({ Component, router, pageProps: { session, ...pageProps } }) {
+// @ts-ignore
+function Website({ Component, router, pageProps: { ...pageProps } }) {
   return (
-    <SessionProvider session={pageProps.session}>
-      <ChakraProvider theme={theme}>
+    <ChakraProvider theme={theme}>
+      <ReduxProvider>
         <Fonts />
         <Layout router={router}>
           <Component {...pageProps} key={router.route} />
         </Layout>
-      </ChakraProvider>
-    </SessionProvider>
+      </ReduxProvider>
+    </ChakraProvider>
   )
 }
 

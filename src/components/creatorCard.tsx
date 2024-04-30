@@ -11,15 +11,18 @@ import {
 } from '@chakra-ui/react'
 import Rating from '@/src/components/rating'
 import NextLink from 'next/link'
-import { Creator } from '@prisma/client'
+import Creator from '@/src/types/Creator'
+import calculateAverageRating from '@/src/util/calculateAverageRating'
 
 interface CreatorCardProps {
   creator: Creator
 }
 
 function CreatorCard({ creator }: CreatorCardProps) {
+  const rating = calculateAverageRating(creator.reviews)
+
   return (
-    <NextLink href={`profile/${creator.id}`}>
+    <NextLink href={`creator/${creator.id}`}>
       <Box w={'full'} bg={'#252835'} rounded={'xl'} overflow={'hidden'}>
         <Image
           h={'120px'}
@@ -45,9 +48,9 @@ function CreatorCard({ creator }: CreatorCardProps) {
                 {creator.description}
               </Heading>
             </Stack>
-            <Rating rating={4.3} />
+            <Rating rating={rating} />
             <Stack align={'center'} direction={'row'} wrap={'wrap'} mt={5}>
-              {creator.tags.map(res => {
+              {creator.tagsInCreator.map(res => {
                 return (
                   <Badge
                     key={res.tag.id}

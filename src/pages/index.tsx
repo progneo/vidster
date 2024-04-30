@@ -9,18 +9,18 @@ import {
   Text
 } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
-import { getCreators } from '@/src/lib/creators'
+import { getTopCreators } from '@/src/lib/creators'
 import NextLink from 'next/link'
 import CreatorCard from '@/src/components/creatorCard'
-import { Creator } from '@prisma/client'
+import Creator from '@/src/types/Creator'
 
 function CreatorsBlock() {
   const [data, setData] = useState<Array<Creator>>([])
   const [isLoading, setLoading] = useState<Boolean>(true)
 
   useEffect(() => {
-    getCreators().then(data => {
-      setData(data.profileList)
+    getTopCreators().then(data => {
+      setData(data)
       setLoading(false)
     })
   }, [])
@@ -40,7 +40,7 @@ function CreatorsBlock() {
 
   return (
     <Grid templateColumns={'repeat(4, 1fr)'} gap={4}>
-      {data.map((creator: Creator, i) => {
+      {data?.map((creator: Creator, i) => {
         return (
           <GridItem key={i} colSpan={{ base: 4, lg: 2, xl: 1 }}>
             <CreatorCard creator={creator} />
@@ -146,7 +146,7 @@ function Page() {
         </GridItem>
       </Grid>
       <Heading noOfLines={1} as="h4" mb={{ base: '2', md: '5' }}>
-        Наиболее просматриваемые
+        Наивысший рейтинг
       </Heading>
       <CreatorsBlock />
     </Box>

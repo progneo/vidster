@@ -14,41 +14,25 @@ import {
   GridItem,
   Heading,
   HStack,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
+  Input,
+  InputGroup,
+  RadioGroup,
+  Stack,
+  Radio,
   Text,
   useDisclosure,
   VStack
 } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
-import { FiFilter, FiTrendingUp } from 'react-icons/fi'
+import { FiFilter } from 'react-icons/fi'
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons'
-import Creator from '@/src/data/Creator'
 import CreatorCard from '@/src/components/creatorCard'
 import { getCreators } from '@/src/lib/creators'
-import { Tag } from '@prisma/client'
-import { arrayOf } from 'prop-types'
 import { getTags } from '@/src/lib/tags'
-
-interface FilterItem {
-  title: string
-  isChecked: boolean
-}
-
-interface FilterCategory {
-  title: string
-  items: Array<FilterItem>
-}
-
-interface CategoryProps extends BoxProps {
-  category: FilterCategory
-}
-
-interface OverlayProps extends FlexProps {
-  children: React.ReactNode
-}
+import Creator from '@/src/types/Creator'
+import { NextRouter, useRouter } from 'next/router'
+import Tag from '@/src/types/Tag'
+import { useSearchParams } from 'next/navigation'
 
 interface PanelProps extends FlexProps {
   onOpen: () => void
@@ -56,50 +40,43 @@ interface PanelProps extends FlexProps {
 
 interface SidebarProps extends BoxProps {
   onClose: () => void
+  onSearch: ({
+    name,
+    sortBy,
+    tags
+  }: {
+    name: string
+    sortBy: string
+    tags: string[]
+  }) => void
 }
 
-const CategoryBlock = ({ category }: CategoryProps) => {
-  const { isOpen, onToggle } = useDisclosure()
-  return (
-    <Box>
-      <HStack onClick={onToggle}>
-        <Text my={2} fontWeight={500}>
-          {category.title}
-        </Text>
-        {isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
-      </HStack>
-      <Collapse in={isOpen} animateOpacity>
-        <VStack alignItems={'start'}>
-          {category.items.map((item, i) => (
-            <Checkbox key={i} colorScheme="red">
-              {item.title}
-            </Checkbox>
-          ))}
-        </VStack>
-      </Collapse>
-    </Box>
-  )
-}
-
-const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
-  const [filterCategories, setFilters] = useState<Array<FilterCategory>>()
+const SidebarContent = ({ onClose, onSearch, ...rest }: SidebarProps) => {
   const [isLoading, setLoading] = useState<Boolean>(true)
+
+  const [tags, setTags] = useState(new Set<string>())
+  const [checkedTags, setCheckedTags] = useState(new Set<string>())
+
+  const [sortBy, setSorting] = React.useState('name')
+
+  const [name, setName] = React.useState('')
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+    setName(event.target.value)
 
   useEffect(() => {
     getTags().then(data => {
-      const tags = Array<FilterItem>()
-      const categories = Array<FilterCategory>()
-
-      for (let tag of data.tagList) {
-        tags.push({ title: tag.name, isChecked: false })
-      }
-
-      categories.push({ title: 'Тэги', items: tags })
-
-      setFilters(categories)
+      setTags(data.map((t: Tag) => t.name))
       setLoading(false)
     })
   }, [])
+
+  const updateQuery = async () => {
+    onSearch({
+      name: name,
+      sortBy: sortBy,
+      tags: Array.from(checkedTags)
+    })
+  }
 
   if (isLoading) {
     return (
@@ -118,7 +95,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
     <Box
       transition="3s ease"
       bg={'#1F1D2B'}
-      w={{ base: 'full', md: 40 }}
+      w={{ base: 'full', md: 60 }}
       pos="absolute"
       h={{ base: 'full', md: 'auto' }}
       p={{ base: 5, md: 0 }}
@@ -130,19 +107,56 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
         </Text>
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
-      {filterCategories?.map((category, i) => (
-        <CategoryBlock key={i} category={category} />
-      ))}
-      <Button
-        mt={3}
-        bg={'#cc5d40'}
-        _hover={{
-          bg: '#994530',
-          color: 'white'
-        }}
-      >
-        Применить
-      </Button>
+      <VStack spacing={3} alignItems={'start'} width="100%">
+        <VStack spacing={1} alignItems={'start'} width="100%">
+          <Text>Название</Text>
+          <InputGroup>
+            <Input
+              value={name}
+              onChange={handleNameChange}
+              variant="filled"
+              placeholder={'Название'}
+            />
+          </InputGroup>
+        </VStack>
+        <VStack alignItems={'start'} width="100%">
+          <Text>Сортировка</Text>
+          <Box
+            px={3}
+            py={2}
+            backgroundColor={'#282633'}
+            width="100%"
+            borderRadius="md"
+          >
+            <RadioGroup value={sortBy} onChange={setSorting}>
+              <Stack spacing={1} direction="column">
+                <Radio colorScheme={'orange'} value="name">
+                  По названию
+                </Radio>
+                <Radio colorScheme="green" value="rating">
+                  По рейтингу
+                </Radio>
+              </Stack>
+            </RadioGroup>
+          </Box>
+        </VStack>
+        <CategoryBlock
+          title={'Тэги'}
+          items={Array.from(tags)}
+          checkedItems={checkedTags}
+          setCheckedItems={setCheckedTags}
+        />
+        <Button
+          bg={'#cc5d40'}
+          _hover={{
+            bg: '#994530',
+            color: 'white'
+          }}
+          onClick={updateQuery}
+        >
+          Применить
+        </Button>
+      </VStack>
     </Box>
   )
 }
@@ -164,77 +178,76 @@ const Panel = ({ onOpen, ...rest }: PanelProps) => {
         variant="ghost"
         onClick={onOpen}
       >
-        Filters
+        Фильтры
       </Button>
-      <Flex minWidth={'max-content'} alignItems={'center'}>
-        <Flex alignItems={'center'}>
-          <Menu>
-            <MenuButton
-              py={2}
-              transition="all 0.3s"
-              _focus={{ boxShadow: 'none' }}
-            >
-              <HStack color={'#ff7551'}>
-                <FiTrendingUp />
-                <Text fontSize="sm">Сортировка</Text>
-              </HStack>
-            </MenuButton>
-            <MenuList bg={'#1F1D2B'} borderColor={'#1F1D2B'}>
-              <MenuItem bg={'#1F1D2B'}>По рейтингу</MenuItem>
-              <MenuItem bg={'#1F1D2B'}>По названию</MenuItem>
-            </MenuList>
-          </Menu>
-        </Flex>
-      </Flex>
     </Flex>
   )
 }
 
-function OverlayBlock({ children }: OverlayProps) {
-  const { isOpen, onOpen, onClose } = useDisclosure()
+function CategoryBlock({
+  title,
+  items,
+  checkedItems,
+  setCheckedItems
+}: {
+  title: string
+  items: string[]
+  checkedItems: Set<string>
+  setCheckedItems: React.Dispatch<React.SetStateAction<Set<string>>>
+}) {
+  const { isOpen, onToggle } = useDisclosure()
+
+  const handleCheckboxChange = (itemTitle: string) => {
+    setCheckedItems(prev => {
+      const newChecked = new Set(prev)
+      if (newChecked.has(itemTitle)) {
+        newChecked.delete(itemTitle)
+      } else {
+        newChecked.add(itemTitle)
+      }
+      return newChecked
+    })
+  }
 
   return (
-    <Box>
-      <Heading noOfLines={1} as="h4" mb={{ base: '2', md: '5' }}>
-        Список видеографов
-      </Heading>
-      <SidebarContent
-        onClose={() => onClose}
-        display={{ base: 'none', md: 'block' }}
-      />
-      <Box>
-        <Drawer
-          isOpen={isOpen}
-          placement="right"
-          onClose={onClose}
-          returnFocusOnClose={false}
-          onOverlayClick={onClose}
-          size="full"
+    <Box width="100%">
+      <HStack onClick={onToggle} mb={2}>
+        <Text fontWeight={500}>{title}</Text>
+        {isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
+      </HStack>
+      <Collapse in={isOpen} animateOpacity>
+        <Box
+          px={3}
+          py={2}
+          backgroundColor={'#282633'}
+          width="100%"
+          borderRadius="md"
         >
-          <DrawerContent>
-            <SidebarContent onClose={onClose} />
-          </DrawerContent>
-        </Drawer>
-      </Box>
-      <Panel onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 40 }} p={4}>
-        {children}
-      </Box>
+          <VStack alignItems={'start'}>
+            {items.map((item, i) => (
+              <Checkbox
+                key={i}
+                colorScheme="red"
+                isChecked={checkedItems.has(item)}
+                onChange={() => handleCheckboxChange(item)}
+              >
+                {item}
+              </Checkbox>
+            ))}
+          </VStack>
+        </Box>
+      </Collapse>
     </Box>
   )
 }
 
-function CreatorsBlock() {
-  const [data, setData] = useState<Array<Creator>>([])
-  const [isLoading, setLoading] = useState<Boolean>(true)
-
-  useEffect(() => {
-    getCreators().then(data => {
-      setData(data.profileList)
-      setLoading(false)
-    })
-  }, [])
-
+function CreatorsBlock({
+  data,
+  isLoading
+}: {
+  data: Creator[]
+  isLoading: boolean
+}) {
   if (isLoading) {
     return (
       <Flex justify={'center'}>
@@ -247,30 +260,92 @@ function CreatorsBlock() {
       </Flex>
     )
   }
-  console.log(data)
+
+  if (data !== undefined) {
+    return (
+      <Grid
+        templateColumns={{ base: 'repeat(2, 1fr)', '2xl': 'repeat(3, 1fr)' }}
+        gap={4}
+      >
+        {data.map((creator: Creator, i) => {
+          return (
+            <GridItem key={i} colSpan={{ base: 2, xl: 1 }}>
+              <CreatorCard creator={creator} />
+            </GridItem>
+          )
+        })}
+      </Grid>
+    )
+  } else {
+    return <Text textAlign={'center'}>Ничего не найдено.</Text>
+  }
+}
+
+function SearchPage() {
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [data, setData] = useState<Array<Creator>>([])
+  const [isLoading, setLoading] = useState<boolean>(true)
+
+  const updateCreators = () => {
+    setLoading(true)
+    getCreators().then(data => {
+      setData(data.items)
+      setLoading(false)
+    })
+  }
+
+  const searchCreators = ({
+    name,
+    sortBy,
+    tags
+  }: {
+    name: string
+    sortBy: string
+    tags: string[]
+  }) => {
+    setLoading(true)
+    getCreators(name, sortBy, tags).then(data => {
+      setData(data.items)
+      setLoading(false)
+    })
+  }
+
+  useEffect(() => {
+    updateCreators()
+  }, [])
 
   return (
-    <Grid
-      templateColumns={{ base: 'repeat(2, 1fr)', '2xl': 'repeat(3, 1fr)' }}
-      gap={4}
-    >
-      {data.map((creator: Creator, i) => {
-        return (
-          <GridItem key={i} colSpan={{ base: 2, xl: 1 }}>
-            <CreatorCard creator={creator} />
-          </GridItem>
-        )
-      })}
-    </Grid>
+    <Box>
+      <HStack>
+        <Heading noOfLines={2} as="h4" mb={{ base: '2', md: '5' }}>
+          Список видеографов
+        </Heading>
+        <Panel onOpen={onOpen} />
+      </HStack>
+      <SidebarContent
+        onClose={onClose}
+        onSearch={searchCreators}
+        display={{ base: 'none', md: 'block' }}
+      />
+      <Box>
+        <Drawer
+          isOpen={isOpen}
+          placement="right"
+          onClose={onClose}
+          returnFocusOnClose={false}
+          onOverlayClick={onClose}
+          size="full"
+        >
+          <DrawerContent>
+            <SidebarContent onClose={onClose} onSearch={searchCreators} />
+          </DrawerContent>
+        </Drawer>
+      </Box>
+      <Box ml={{ base: 0, md: 60 }} p={4}>
+        <CreatorsBlock data={data} isLoading={isLoading} />
+      </Box>
+    </Box>
   )
 }
 
-function SearchCard() {
-  return (
-    <OverlayBlock>
-      <CreatorsBlock />
-    </OverlayBlock>
-  )
-}
-
-export default SearchCard
+export default SearchPage

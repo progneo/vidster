@@ -1,8 +1,11 @@
 import Head from 'next/head'
 import { Box } from '@chakra-ui/react'
 import { NextRouter } from 'next/router'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import SidebarWithHeader from '@/src/components/navbar/navbar'
+import { useAppDispatch, useAppSelector } from '@/src/store/store'
+import { getAuthorizationStatus, getMe } from '@/src/lib/auth'
+import { setAuthState, setUserData } from '@/src/store/authSlice'
 
 interface MainProps {
   children: React.ReactNode
@@ -10,6 +13,24 @@ interface MainProps {
 }
 
 const Layout = ({ children, router }: MainProps) => {
+  const dispatch = useAppDispatch()
+  const authState = useAppSelector(state => state.auth)
+
+  const [isLoading, setLoading] = useState<Boolean>(true)
+
+  useEffect(() => {
+    getAuthorizationStatus().then(isAuthorized => {
+      dispatch(setAuthState(isAuthorized))
+
+      if (isAuthorized) {
+        getMe().then(userData => {
+          dispatch(setUserData(userData))
+        })
+      }
+      setLoading(false)
+    })
+  }, [authState, dispatch])
+
   return (
     <Box>
       <Head>

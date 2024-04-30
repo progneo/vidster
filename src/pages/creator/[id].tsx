@@ -20,19 +20,21 @@ import {
 import { FiMail, FiMapPin } from 'react-icons/fi'
 import Rating from '@/src/components/rating'
 import YoutubeEmbed from '@/src/components/youtubeEmbed'
-import { Creator } from '@prisma/client'
+import Creator from '@/src/types/Creator'
+import calculateAverageRating from '@/src/util/calculateAverageRating'
 
-function Profile() {
+function CreatorPage() {
   const router = useRouter()
   const { id } = router.query
 
+  // @ts-ignore
   const [data, setData] = useState<Creator>(null)
   const [isLoading, setLoading] = useState<Boolean>(true)
 
   useEffect(() => {
     if (id) {
       getCreatorById(Number(id)).then(data => {
-        setData(data.profile)
+        setData(data)
         setLoading(false)
         console.log(data)
       })
@@ -79,14 +81,14 @@ function Profile() {
           >
             <Avatar size="xl" name={data.username} src={data.avatar} />
             <Heading>{data.username}</Heading>
-            <Rating rating={'4.5'} />
+            <Rating rating={calculateAverageRating(data.reviews)} />
             <Text>{data.description}</Text>
             <HStack>
               <FiMapPin />
               <Text>{data.address}</Text>
             </HStack>
             <Flex gap={2} wrap={'wrap'}>
-              {data.tags.map(res => {
+              {data.tagsInCreator.map(res => {
                 return (
                   <Badge
                     key={res.tag.id}
@@ -106,13 +108,13 @@ function Profile() {
               backgroundColor="#6c5ecf"
               variant="solid"
             >
-              Email
+              Связаться по почте
             </Button>
           </VStack>
         </Box>
         <Stack width={'100%'}>
           <Heading noOfLines={1} as="h4" mb={{ base: '2', md: '5' }}>
-            List of works
+            Список работ
           </Heading>
           <Grid
             templateColumns={{
@@ -135,4 +137,4 @@ function Profile() {
   )
 }
 
-export default Profile
+export default CreatorPage

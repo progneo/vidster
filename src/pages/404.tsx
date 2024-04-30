@@ -14,10 +14,10 @@ const NotFound = () => {
         404
       </Heading>
       <Text fontSize="18px" mt={3} mb={2}>
-        Page Not Found
+        Страница не найдена
       </Text>
       <Text color={'gray.500'} mb={6}>
-        The page you&apos;re looking for does not seem to exist
+        Страницы, которую вы ищите, не существует
       </Text>
 
       <NextLink href={'/'}>
@@ -27,7 +27,7 @@ const NotFound = () => {
           color="white"
           variant="solid"
         >
-          Go to Home
+          На главную
         </Button>
       </NextLink>
     </Box>

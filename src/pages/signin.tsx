@@ -16,8 +16,10 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { useEffect } from 'react'
-import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
+import { getMe, login } from '@/src/lib/auth'
+import { setAuthState, setUserData } from '@/src/store/authSlice'
+import { useAppDispatch } from '@/src/store/store'
 
 const FormSchema = z.object({
   email: z.string().min(1, 'Email is required').email('Invalid email'),
@@ -29,6 +31,7 @@ const FormSchema = z.object({
 
 function SignInCard() {
   const router = useRouter()
+  const dispatch = useAppDispatch()
   const {
     register,
     handleSubmit,
@@ -44,17 +47,15 @@ function SignInCard() {
   type FormSchema = z.infer<typeof FormSchema>
 
   const onSubmit: SubmitHandler<FormSchema> = async data => {
-    const signInData = await signIn('credentials', {
-      email: data.email,
-      password: data.password,
-      redirect: false
+    const email = data.email
+    const password = data.password
+    await login({ email, password }).then(status => {
+      if (status === 200) {
+        dispatch(setAuthState(true))
+        getMe().then(userData => dispatch(setUserData(userData)))
+        router.push('/')
+      }
     })
-
-    if (signInData?.error) {
-      console.log(signInData.error)
-    } else {
-      router.push('/')
-    }
   }
 
   useEffect(() => {
@@ -65,13 +66,13 @@ function SignInCard() {
     <Flex justify={'center'}>
       <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
         <Stack align={'center'}>
-          <Heading fontSize={'4xl'}>Sign in to your account</Heading>
+          <Heading fontSize={'4xl'}>Вход в аккаунт</Heading>
         </Stack>
         <Box rounded={'lg'} bg={'#3a3651'} boxShadow={'lg'} p={8}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Stack spacing={4}>
               <FormControl id="email">
-                <FormLabel>Email address</FormLabel>
+                <FormLabel>Email</FormLabel>
                 <Input
                   {...register('email')}
                   isInvalid={!!errors.email}
@@ -81,7 +82,7 @@ function SignInCard() {
                 />
               </FormControl>
               <FormControl>
-                <FormLabel>Password</FormLabel>
+                <FormLabel>Пароль</FormLabel>
                 <Input
                   {...register('password')}
                   isInvalid={!!errors.password}
@@ -96,9 +97,9 @@ function SignInCard() {
                   align={'start'}
                   justify={'space-between'}
                 >
-                  <Checkbox colorScheme="red">Remember me</Checkbox>
+                  <Checkbox colorScheme="red">Запомнить меня</Checkbox>
                   <NextLink href={'#'}>
-                    <Text color={'#ff7551'}>Forgot password?</Text>
+                    <Text color={'#ff7551'}>Забыли пароль?</Text>
                   </NextLink>
                 </Stack>
                 <VStack>
@@ -109,10 +110,10 @@ function SignInCard() {
                     _hover={{
                       bg: '#b25138'
                     }}
-                    type="submit"
                     isLoading={isSubmitting}
+                    type="submit"
                   >
-                    Sign in
+                    Войти
                   </Button>
                   <NextLink href={'/signup'}>
                     <Button
@@ -123,7 +124,7 @@ function SignInCard() {
                         bg: '#1e1c2a'
                       }}
                     >
-                      Create account
+                      Создать аккаунт
                     </Button>
                   </NextLink>
                 </VStack>

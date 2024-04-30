@@ -20,6 +20,7 @@ import * as z from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { useRouter } from 'next/router'
+import { signup } from '@/src/lib/auth'
 
 const FormSchema = z
   .object({
@@ -56,29 +57,26 @@ function SignupCard() {
   })
   type FormSchema = z.infer<typeof FormSchema>
 
-  const onSubmit: SubmitHandler<FormSchema> = async data => {
-    const response = await fetch('/api/user', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        password: data.password
-      })
-    })
-
-    if (response.ok) {
-      router.push('/signin')
-    } else {
-      console.error('Registration failed')
-    }
-  }
-
   const [showPassword, setShowPassword] = useState(false)
   const [isOrdering, setIsOrdering] = useState(false)
+
+  const onSubmit: SubmitHandler<FormSchema> = async data => {
+    const firstName = data.firstName
+    const lastName = data.lastName
+    const email = data.email
+    const password = data.password
+    await signup({
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      password: password,
+      isCreator: !isOrdering
+    }).then(status => {
+      if (status === 201) {
+        router.push('/signin')
+      }
+    })
+  }
 
   useEffect(() => {
     setFocus('firstName')
@@ -89,25 +87,25 @@ function SignupCard() {
       <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
         <Stack align={'center'}>
           <Heading fontSize={'4xl'} textAlign={'center'}>
-            Sign up
+            Регистрация
           </Heading>
         </Stack>
         <Box rounded={'lg'} bg={'#3a3651'} boxShadow={'lg'} p={8}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Stack spacing={4}>
               <HStack spacing={4} justify={'center'}>
-                <Text>I&apos;m creating</Text>
+                <Text>Я создаю</Text>
                 <Switch
                   id="isOrdering"
                   colorScheme={'red'}
                   onChange={() => setIsOrdering(isOrdering => !isOrdering)}
                 />
-                <Text>I&apos;m ordering</Text>
+                <Text>Я заказываю</Text>
               </HStack>
               <HStack>
                 <Box>
                   <FormControl>
-                    <FormLabel htmlFor="firstName">First Name</FormLabel>
+                    <FormLabel htmlFor="firstName">Имя</FormLabel>
                     <Input
                       {...register('firstName')}
                       isInvalid={!!errors.firstName}
@@ -119,7 +117,7 @@ function SignupCard() {
                 </Box>
                 <Box>
                   <FormControl>
-                    <FormLabel htmlFor="lastName">Last Name</FormLabel>
+                    <FormLabel htmlFor="lastName">Фамилия</FormLabel>
                     <Input
                       {...register('lastName')}
                       isInvalid={!!errors.lastName}
@@ -130,12 +128,8 @@ function SignupCard() {
                   </FormControl>
                 </Box>
               </HStack>
-              <FormControl display={isOrdering ? 'block' : 'none'}>
-                <FormLabel htmlFor="organization">Organization name</FormLabel>
-                <Input id="organization" />
-              </FormControl>
               <FormControl>
-                <FormLabel htmlFor="email">Email address</FormLabel>
+                <FormLabel htmlFor="email">Email</FormLabel>
                 <Input
                   {...register('email')}
                   isInvalid={!!errors.email}
@@ -145,7 +139,7 @@ function SignupCard() {
                 />
               </FormControl>
               <FormControl>
-                <FormLabel htmlFor="password">Password</FormLabel>
+                <FormLabel htmlFor="password">Пароль</FormLabel>
                 <InputGroup>
                   <Input
                     {...register('password')}
@@ -168,7 +162,7 @@ function SignupCard() {
               </FormControl>
               <FormControl>
                 <FormLabel htmlFor="confirmPassword">
-                  Confirm Password
+                  Подтверждение пароля
                 </FormLabel>
                 <InputGroup>
                   <Input
@@ -190,13 +184,13 @@ function SignupCard() {
                   type="submit"
                   isLoading={isSubmitting}
                 >
-                  Sign in
+                  Зарегистрироваться
                 </Button>
               </Stack>
               <HStack pt={6} justifyContent={'center'}>
-                <Text align={'center'}> Already a user?</Text>
+                <Text align={'center'}>Уже зарегистрированы?</Text>
                 <NextLink href={'signin'}>
-                  <Text color={'#ff7551'}>Login</Text>
+                  <Text color={'#ff7551'}>Войти</Text>
                 </NextLink>
               </HStack>
             </Stack>

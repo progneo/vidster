@@ -20,8 +20,8 @@ import { IconType } from 'react-icons'
 import React from 'react'
 import NextLink from 'next/link'
 import { SearchIcon } from '@chakra-ui/icons'
-import { useSession } from 'next-auth/react'
 import UserAccountNav from '@/src/components/navbar/userAccountNav'
+import { useAppSelector } from '@/src/store/store'
 
 interface LinkItemProps {
   name: string
@@ -134,13 +134,14 @@ const LoginButton = () => {
 }
 
 const UserPanel = () => {
-  const { data: session, status } = useSession()
+  const authState = useAppSelector(state => state.auth)
 
-  if (status === 'authenticated') {
+  if (authState.isAuthorized) {
     return (
       <UserAccountNav
-        avatar={'https://bit.ly/broken-link'}
-        name={session?.user.firstName}
+        avatar={authState.avatar}
+        name={authState.firstName}
+        role={authState.role}
       />
     )
   } else {
@@ -167,13 +168,6 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         aria-label="open menu"
         icon={<FiMenu />}
       />
-      <InputGroup>
-        <Input variant="filled" placeholder="Поиск" />
-        <InputRightElement>
-          {' '}
-          <SearchIcon color="#5a5a68" />{' '}
-        </InputRightElement>
-      </InputGroup>
 
       <Flex minWidth={'max-content'} alignItems={'center'}>
         <Flex alignItems={'center'}>
